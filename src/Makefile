@@ -59,3 +59,7 @@ libcliquer.so: cl.o cliquer.o graph.o reorder.o
 
 libcliquer.a: cl.o cliquer.o graph.o reorder.o
 	$(CC) -o $@ cl.o cliquer.o graph.o reorder.o
+
+
+install: libcliquer.so libcliquer.a
+	cp libcliquer.* lib/
