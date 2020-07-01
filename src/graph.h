@@ -30,6 +30,9 @@ extern void graph_free(graph_t *g);
 extern void graph_resize(graph_t *g, int size);
 extern void graph_crop(graph_t *g);
 
+extern void graph_add_edge(graph_t * g, int i, int j);
+extern void graph_del_edge(graph_t * g, int i, int j);
+
 extern boolean graph_weighted(graph_t *g);
 extern int graph_edge_count(graph_t *g);
 

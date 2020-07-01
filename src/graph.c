@@ -148,6 +148,16 @@ int graph_edge_count(graph_t *g) {
 	}
 	return count/2;
 }
+// Add edge to a graph
+void graph_add_edge(graph_t * g, int i, int j)
+{
+	GRAPH_ADD_EDGE(g, i, j);
+}
+// Delete edge from graph
+extern void graph_del_edge(graph_t * g, int i, int j)
+{
+	GRAPH_DEL_EDGE(g, i, j);
+}
 
 
 /*
