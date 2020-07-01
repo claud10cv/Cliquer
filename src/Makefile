@@ -62,4 +62,4 @@ libcliquer.a: cl.o cliquer.o graph.o reorder.o
 
 
 install: libcliquer.so libcliquer.a
-	cp libcliquer.* lib/
+	mv libcliquer.* lib/
