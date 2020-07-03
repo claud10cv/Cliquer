@@ -35,6 +35,8 @@ extern int get_clique_default_options_clique_list_length();
 extern int clique_max_weight(graph_t *g,clique_options *opts);
 extern set_t clique_find_single(graph_t *g,int min_weight,int max_weight,
 				boolean maximal, clique_options *opts);
+extern int *clique_find_single_caller(graph_t *g,int min_weight,int max_weight,
+				boolean maximal, clique_options *opts);
 extern int clique_find_all(graph_t *g, int req_weight, boolean exact,
 			   boolean maximal, clique_options *opts);
 

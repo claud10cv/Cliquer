@@ -116,8 +116,9 @@ static boolean store_clique(set_t clique, graph_t *g, clique_options *opts);
 static boolean is_maximal(set_t clique, graph_t *g);
 static boolean false_function(set_t clique,graph_t *g,clique_options *opts);
 
-
-
+static void array_free(int *x) {
+	free(x);
+}
 
 
 /*****  Unweighted searches  *****/
@@ -1345,6 +1346,31 @@ int clique_max_weight(graph_t *g,clique_options *opts) {
 	set_free(s);
 	return weight;
 }
+
+
+
+int *clique_find_single_caller(graph_t *g,int min_weight,int max_weight,
+				boolean maximal, clique_options *opts) {
+
+	set_t s;
+	s = clique_find_single(g, min_weight, max_weight, maximal, opts);
+
+	int *clique_info;
+	clique_info=malloc((int)SET_MAX_SIZE(s) + 1);
+	clique_info[0] = (int)SET_MAX_SIZE(s);
+
+
+	int i;
+	for (i=0; i<SET_MAX_SIZE(s); i++)
+		if (SET_CONTAINS(s,i)) {
+			clique_info[i+1] = 1;
+		} else {
+			clique_info[i+1] = 0;
+		}
+
+	return clique_info;
+}
+
 
 
 /*
