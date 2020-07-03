@@ -2,7 +2,7 @@
 /*
  * This file contains the clique searching routines.
  *
- * Copyright (C) 2002 Sampo Niskanen, Patric Östergård.
+ * Copyright (C) 2002 Sampo Niskanen, Patric ï¿½stergï¿½rd.
  * Licensed under the GNU GPL, read the file LICENSE for details.
  */
 
@@ -21,6 +21,15 @@ static clique_options clique_default_options_struct = {
 	reorder_by_default, NULL, clique_print_time, NULL, NULL, NULL, NULL, 0
 };
 clique_options *clique_default_options=&clique_default_options_struct;
+
+set_t * get_clique_options_clique_list(clique_options * opts)
+{
+	return opts->clique_list;
+}
+int get_clique_options_clique_list_length(clique_options * opts)
+{
+	return opts->clique_list_length;
+}
 
 
 /* Calculate d/q, rounding result upwards/downwards. */
@@ -568,7 +577,7 @@ static int weighted_clique_search_single(int *table, int min_weight,
 		}
 		return 0;
 	}
-	
+
 	localopts.time_function=NULL;
 	localopts.reorder_function=NULL;
 	localopts.reorder_map=NULL;
@@ -814,7 +823,7 @@ static int sub_weighted_all(int *table, int size, int weight,
 		if (current_weight >= max_weight) {
 			/* Clique too heavy. */
 			return min_weight-1;
-		} 
+		}
 	}
 	if (size <= 0) {
 		/* current_weight < min_weight, prune_low < min_weight,
@@ -912,7 +921,7 @@ static boolean store_clique(set_t clique, graph_t *g, clique_options *opts) {
 		/*
 		 * This has been a major source of bugs:
 		 * Has clique_list_count been set to 0 before calling
-		 * the recursions? 
+		 * the recursions?
 		 */
 		if (clique_list_count <= 0) {
 			fprintf(stderr,"CLIQUER INTERNAL ERROR: "
@@ -1164,7 +1173,7 @@ set_t clique_unweighted_find_single(graph_t *g,int min_size,int max_size,
 			}
 		}
 	}
-	
+
     cleanreturn:
 	s=current_clique;
 
@@ -1553,7 +1562,7 @@ int clique_find_all(graph_t *g, int min_weight, int max_weight,
 				return 0;
 			}
 		}
-		
+
 		weight_multiplier = g->weights[0];
 		entrance_level--;
 		i=clique_unweighted_find_all(g,min_weight,max_weight,maximal,
