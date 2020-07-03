@@ -116,7 +116,7 @@ static boolean store_clique(set_t clique, graph_t *g, clique_options *opts);
 static boolean is_maximal(set_t clique, graph_t *g);
 static boolean false_function(set_t clique,graph_t *g,clique_options *opts);
 
-static void array_free(int *x) {
+void array_free(int *x) {
 	free(x);
 }
 
@@ -1348,6 +1348,11 @@ int clique_max_weight(graph_t *g,clique_options *opts) {
 }
 
 
+/*
+ * clique_find_single_caller(): Interface for function clique_find_single(),
+ * which is implemented below.
+ */
+
 
 int *clique_find_single_caller(graph_t *g,int min_weight,int max_weight,
 				boolean maximal, clique_options *opts) {
@@ -1357,16 +1362,19 @@ int *clique_find_single_caller(graph_t *g,int min_weight,int max_weight,
 
 	int *clique_info;
 	clique_info=malloc((int)SET_MAX_SIZE(s) + 1);
-	clique_info[0] = (int)SET_MAX_SIZE(s);
-
 
 	int i;
-	for (i=0; i<SET_MAX_SIZE(s); i++)
+	int counter = 0;
+	for (i=0; i<SET_MAX_SIZE(s); i++) {
 		if (SET_CONTAINS(s,i)) {
 			clique_info[i+1] = 1;
+			counter++;
 		} else {
 			clique_info[i+1] = 0;
 		}
+	}
+
+	clique_info[0] = counter;
 
 	return clique_info;
 }
@@ -1528,7 +1536,42 @@ set_t clique_find_single(graph_t *g,int min_weight,int max_weight,
 }
 
 
+/*
+ * clique_find_all_caller(): Interface for function clique_find_all(), which
+ * is implemented below.
+ */
 
+int **clique_find_all_caller(graph_t *g, int min_weight, int max_weight,
+			   boolean maximal, clique_options *opts) {
+
+	clique_find_all(g, min_weight, max_weight, maximal, opts);
+
+	// Retrieve information
+	set_t *clique_list = opts->clique_list;
+	int clique_list_length = opts->clique_list_length;
+
+	int **all_cliques;
+	all_cliques=malloc(clique_list_length+1);
+
+	// all_cliques first position contains total number of cliques
+	all_cliques[0] = malloc(1);
+	all_cliques[0][0] = clique_list_length;
+
+	int i,j;
+	for (i = 1; i < clique_list_length + 1; i++) {
+		int size = SET_MAX_SIZE(clique_list[i-1]);
+		all_cliques[i] = malloc(size);
+		for (j = 0; j < size; j++) {
+			if (SET_CONTAINS(clique_list[i-1],j)) {
+				all_cliques[i][j] = 1;
+			} else {
+				all_cliques[i][j] = 0;
+			}
+		}
+	}
+
+	return all_cliques;
+}
 
 
 /*
