@@ -30,6 +30,14 @@ int get_clique_options_clique_list_length(clique_options * opts)
 {
 	return opts->clique_list_length;
 }
+set_t * get_clique_default_options_clique_list()
+{
+	return clique_default_options->clique_list;
+}
+int get_clique_default_options_clique_list_length()
+{
+	return clique_default_options->clique_list_length;
+}
 
 
 /* Calculate d/q, rounding result upwards/downwards. */

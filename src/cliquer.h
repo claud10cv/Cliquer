@@ -27,7 +27,9 @@ struct _clique_options {
 extern clique_options *clique_default_options;
 
 extern set_t * get_clique_options_clique_list(clique_options * opts);
+extern set_t * get_clique_default_options_clique_list();
 extern int get_clique_options_clique_list_length(clique_options * opts);
+extern int get_clique_default_options_clique_list_length();
 
 /* Weighted clique functions */
 extern int clique_max_weight(graph_t *g,clique_options *opts);
