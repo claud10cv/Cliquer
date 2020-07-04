@@ -43,7 +43,7 @@ extern int clique_find_all(graph_t *g, int req_weight, boolean exact,
 extern int *clique_find_single_caller(graph_t *g,int min_weight,int max_weight,
 				boolean maximal, clique_options *opts);
 
-extern int **clique_find_all_caller(graph_t *g, int min_weight, int max_weight,
+extern int *clique_find_all_caller(graph_t *g, int min_weight, int max_weight,
 			   boolean maximal, clique_options *opts);
 
 extern void array_free(int *x);

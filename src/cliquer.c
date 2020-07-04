@@ -1361,7 +1361,7 @@ int *clique_find_single_caller(graph_t *g,int min_weight,int max_weight,
 	s = clique_find_single(g, min_weight, max_weight, maximal, opts);
 
 	int *clique_info;
-	clique_info=malloc((int)SET_MAX_SIZE(s) + 1);
+	clique_info = (int *) malloc(((int)SET_MAX_SIZE(s) + 1) * sizeof(int));
 
 	int i;
 	int counter = 0;
@@ -1541,38 +1541,68 @@ set_t clique_find_single(graph_t *g,int min_weight,int max_weight,
  * is implemented below.
  */
 
-int **clique_find_all_caller(graph_t *g, int min_weight, int max_weight,
+// Auxiliary structures to run clique_find_all_caller
+int *(*reorder)(graph_t *, boolean)=reorder_by_default;
+set_t *clique_list;
+int clique_count=0;
+int clique_list_size=0;
+
+static boolean record_clique_func_aux(set_t s,graph_t *g,clique_options *opts);
+
+
+int *clique_find_all_caller(graph_t *g, int min_weight, int max_weight,
 			   boolean maximal, clique_options *opts) {
 
+	opts=malloc(sizeof(clique_options));
+	opts->time_function=clique_print_time;
+	opts->output=stderr;
+	opts->reorder_function=reorder;
+	opts->reorder_map=NULL;
+	opts->user_function=record_clique_func_aux;
+	opts->user_data=NULL;
+	opts->clique_list=NULL;
+	opts->clique_list_length=0;
+
+	const int N = g->n;
 	clique_find_all(g, min_weight, max_weight, maximal, opts);
 
-	// Retrieve information
-	set_t *clique_list = opts->clique_list;
-	int clique_list_length = opts->clique_list_length;
+	ASSERT(SET_MAX_SIZE(clique_list[0]) == N);
 
-	int **all_cliques;
-	all_cliques=malloc(clique_list_length+1);
+	int i, j;
 
-	// all_cliques first position contains total number of cliques
-	all_cliques[0] = malloc(1);
-	all_cliques[0][0] = clique_list_length;
+	int *info_all_cliques;
+	info_all_cliques = (int *) malloc(((clique_count * N) + 1) * sizeof(int));
 
-	int i,j;
-	for (i = 1; i < clique_list_length + 1; i++) {
-		int size = SET_MAX_SIZE(clique_list[i-1]);
-		all_cliques[i] = malloc(size);
-		for (j = 0; j < size; j++) {
-			if (SET_CONTAINS(clique_list[i-1],j)) {
-				all_cliques[i][j] = 1;
+	for (i = 0; i < (clique_count * N) + 1; i++) {
+		info_all_cliques[i] = -1;
+	}
+
+	info_all_cliques[0] = clique_count;
+
+	for (j=0; j<clique_count; j++) {
+		for (i=0; i<N; i++) {
+			int id = (j * N) + (i+1);
+			if (SET_CONTAINS(clique_list[j],i)) {
+				info_all_cliques[id] = 1;
 			} else {
-				all_cliques[i][j] = 0;
+				info_all_cliques[id] = 0;
 			}
 		}
 	}
 
-	return all_cliques;
+	return info_all_cliques;
 }
 
+static boolean record_clique_func_aux(set_t s,graph_t *g,clique_options *opts) {
+	if (clique_count>=clique_list_size) {
+		clique_list=realloc(clique_list,(clique_list_size+512) *
+				    sizeof(set_t));
+		clique_list_size+=512;
+	}
+	clique_list[clique_count]=set_duplicate(s);
+	clique_count++;
+	return TRUE;
+}
 
 /*
  * clique_find_all()
